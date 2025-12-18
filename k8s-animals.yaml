@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: animals-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: animals-app
+  template:
+    metadata:
+      labels:
+        app: animals-app
+    spec:
+      containers:
+        - name: animals-app
+          image: animals-service:1.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres-service:5432/postgres_db
+            - name: SPRING_DATASOURCE_USERNAME
+              value: my_postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: animals-service
+spec:
+  selector:
+    app: animals-app
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080
