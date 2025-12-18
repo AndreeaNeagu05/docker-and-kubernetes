@@ -1,16 +1,14 @@
-FROM maven:3.9-eclipse-temurin-17 AS build
+# Use a JDK 21 runtime image
+FROM eclipse-temurin:21-jre
+
+# Workdir inside container
 WORKDIR /app
 
-COPY pom.xml .
-COPY src ./src
+# Copy the jar built by Maven
+COPY target/docker-and-kubernetes-1.0-SNAPSHOT.jar app.jar
 
-RUN mvn clean package -DskipTests
-
-FROM eclipse-temurin:17-jdk
-WORKDIR /app
-
-COPY --from=build /app/target/*.jar app.jar
-
+# Expose the app port
 EXPOSE 8080
 
-ENTRYPOINT ["java","-jar","app.jar"]
+# Start the Spring Boot app
+ENTRYPOINT ["java", "-jar", "app.jar"]

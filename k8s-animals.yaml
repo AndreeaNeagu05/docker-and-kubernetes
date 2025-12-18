@@ -15,9 +15,15 @@ spec:
       containers:
         - name: animals-app
           image: animals-service:1.0
-          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres-service:5432/postgres_db
+            - name: SPRING_DATASOURCE_USERNAME
+              value: my_postgres
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password
 ---
 apiVersion: v1
 kind: Service
