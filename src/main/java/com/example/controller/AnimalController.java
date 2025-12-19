@@ -1,7 +1,8 @@
 package com.example.controller;
 
 import com.example.model.Animal;
-import com.example.repository.AnimalRepository;
+import com.example.repositories.AnimalCustomRepository;
+import com.example.repositories.AnimalRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,9 +13,11 @@ import java.util.List;
 public class AnimalController {
 
     private final AnimalRepository animalRepository;
+    private final AnimalCustomRepository animalCustomRepository;
 
-    public AnimalController(AnimalRepository  animalRepository) {
+    public AnimalController(AnimalRepository  animalRepository, AnimalCustomRepository animalCustomRepository) {
         this.animalRepository = animalRepository;
+        this.animalCustomRepository = animalCustomRepository;
     }
 
     @PostMapping
@@ -34,5 +37,17 @@ public class AnimalController {
         return animalRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/count/{category}")
+    public ResponseEntity<Integer> countByCategory(@PathVariable String category) {
+        int count = animalCustomRepository.countAnimalsByCategory(category);
+        return ResponseEntity.ok(count);
+    }
+
+    @PostMapping("/uppercase/{category}")
+    public ResponseEntity<String> uppercaseNamesByCategory(@PathVariable String category) {
+        animalCustomRepository.uppercaseNamesForCategory(category);
+        return ResponseEntity.ok("Names updated to UPPERCASE for category: " + category);
     }
 }
